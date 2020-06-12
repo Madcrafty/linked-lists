@@ -1,123 +1,134 @@
-// LinkedList.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
-#include <iostream>
 #include "Node.h"
-Node HeadNode;
-Node TailNode;
-int iterator;
-void pushFront(int value) {
-	Node new_node;
-	new_node.data = value;
-	Node temp = first();
-	new_node.next = &temp;
-}
-void pushBack(int value) {
-	Node new_node;
-	new_node.data = value;
-	Node temp = first();
-	new_node.prev = &temp;
-}
-void insert(int iterator, int value) {
-	Node new_node;
-	new_node.data = value;
-	Node temp = first();
-	for (size_t i = 0; i < iterator; i++)
-	{
-		temp = *temp.next;
-	}
-	Node nextTemp = *temp.next;
-	new_node.next = &nextTemp;
-	new_node.prev = &temp;
-}
-int begin() {
+#include "LinkedList.h"
+
+LinkedList::LinkedList(int Value) {
+	Node* new_node = new Node();
+	new_node->data = Value;
+	HeadNode = new_node;
+	TailNode = new_node;
 	iterator = 0;
 }
-int end() {
+LinkedList::~LinkedList() {
+
+}
+int LinkedList::read(int value) {
+	Node* temp = first();
+	for (size_t i = 0; i < value; i++)
+	{
+		temp = temp->next;
+	}
+	return temp->data;
+}
+void LinkedList::pushFront(int value) {
+	Node* new_node = new Node();
+	new_node->data = value;
+	Node* temp = first();
+	new_node->next = temp;
+	temp->prev = new_node;
+	HeadNode = new_node;
+}
+void LinkedList::pushBack(int value) {
+	Node* new_node = new Node();
+	new_node->data = value;
+	Node* temp = last();
+	temp->next = new_node;
+	TailNode = new_node;
+}
+void LinkedList::insert(int iterator, int value) {
+	Node* new_node = new Node();
+	new_node->data = value;
+	Node* temp = first();
+	for (size_t i = 0; i < iterator; i++)
+	{
+		temp = temp->next;
+	}
+	Node* nextTemp = temp->next;
+	new_node->next = nextTemp;
+	new_node->prev = temp;
+	temp->next = new_node;
+	nextTemp->prev = new_node;
+}
+void LinkedList::begin() {
+	iterator = 0;
+}
+void LinkedList::end() {
 	iterator = count();
 }
-Node first() {
+Node* LinkedList::first() {
 	return HeadNode;
 }
-Node last() {
+Node* LinkedList::last() {
 	return TailNode;
 }
-int count() {
+int LinkedList::count() {
 	int i = 0;
-	Node temp = first();
-	while (temp.next != nullptr)
+	Node* temp = first();
+	while (temp->next != nullptr)
 	{
-		temp = *temp.next;
+		temp = temp->next;
 		i++;
 	}
+	i++;
 	return i;
 }
-void erase(int iterator) {
-	Node temp = first();
+void LinkedList::erase(int iterator) {
+	Node* temp = first();
 	for (size_t i = 0; i < iterator; i++)
 	{
-		temp = *temp.next;
+		temp = temp->next;
 	}
+	temp->next->prev = temp->prev->next;
+	temp->prev->next = temp->next->prev;
 	delete &temp;
 }
-void remove(int value) {
-	Node temp = first();
+void LinkedList::remove(int value) {
+	Node* temp = first();
 	for (size_t i = 0; i < iterator; i++)
 	{
-		if (temp.data == value)
+		if (temp->data == value)
 		{
-			if (temp.prev == HeadNode.prev)
+			if (temp->prev == HeadNode->prev)
 			{
-				HeadNode = *temp.next;
+				HeadNode = temp->next;
 			}
-			if (temp.next == TailNode.next)
+			if (temp->next == TailNode->next)
 			{
-				TailNode = *temp.prev;
+				TailNode = temp->prev;
 			}
+			temp->next->prev = temp->prev->next;
+			temp->prev->next = temp->next->prev;
 			delete& temp;
 		}
-		temp = *temp.next;
+		temp = temp->next;
 	}
 	
 }
-void popBack() {
-	Node temp = *TailNode.prev;
+void LinkedList::popBack() {
+	Node* temp = TailNode->prev;
 	delete& TailNode;
 	TailNode = temp;
+	TailNode->next = nullptr;
 }
-void popFront() {
-	Node temp = *HeadNode.next;
+void LinkedList::popFront() {
+	Node* temp = HeadNode->next;
 	delete& HeadNode;
 	HeadNode = temp;
+	HeadNode->prev = nullptr;
 }
-bool empty() {
+bool LinkedList::empty() {
 	if (count() == 0)
 	{
 		return true;
 	}
 	return false;
 }
-void clear() {
-	Node temp = HeadNode;
-	while (temp.next == nullptr)
+void LinkedList::clear() {
+	Node* temp = HeadNode;
+	while (temp->next != nullptr)
 	{
-		temp = *temp.next;
-		delete temp.prev;
+		temp = temp->next;
+		if (temp->prev != nullptr)
+			delete temp->prev;
 	}
 	delete& temp;
 }
-int main()
-{
-    std::cout << "Hello World!\n";
-}
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file

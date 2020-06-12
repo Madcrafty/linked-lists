@@ -6,7 +6,7 @@ public:
 	Node(int address);
 	~Node();
 
-	int data;
+	int data = 0;
 	Node* next = nullptr;
 	Node* prev = nullptr;
 };
